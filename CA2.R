@@ -267,3 +267,14 @@ t.test(residuals(model),mu=0)
 shapiro.test(residuals(model_2))
 #residuals diffrent from zero
 t.test(residuals(model_2),mu=0)
+
+
+#Check for multi_collinearity
+install.packages("faraway")
+library(faraway)
+#Model 1
+v1 <-vif(model)
+v1
+#Model 2
+v2<-vif(model_2)
+v2
