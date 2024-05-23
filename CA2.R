@@ -62,7 +62,8 @@ scatter.smooth(x = data$`Weight`,
 # Examining correlation between Body Fat and Independent variables
 cor(data)
 attach(data)
-# Examining the other variables
+
+# Examining the other variables individually
 paste("Correlation for Body Fat and Age: ", round(cor(Body_fat, Age),2))
 paste("Correlation for Body Fat and Chest_circumference: ", round(cor(Body_fat, Chest_circumference),2))
 paste("Correlation for Body Fat and Density: ", round(cor(Body_fat, Density),2))
@@ -71,7 +72,7 @@ paste("Correlation for Body Fat and Weight: ", round(cor(Body_fat, Weight),2))
 
 
 
-# Check for outliers
+# Checking  for outliers for the variables
 windows(20,10)
 par(mfrow = c(3, 2)) # divide graph area in 3 rows by 2 columns
 
@@ -89,53 +90,20 @@ boxplot(Weight,
         main = "Weight") # box plot for 'Weight'
 
 
-#Body fat,Chest_circumference,Knee_circumference,Weight variables contains outliers.
+#Knee_circumference variables contains outliers.
+
 # Use boxplot.stats() function to generate relevant outliers
-#Body Fat
-outlier_values <- boxplot.stats(Body_fat)$out # outlier values.
-paste("Population outliers: ", paste(outlier_values, sep =", "))
 
 
-# Remove outliers
-#Body Fat
-data <- subset(data,data$Body_fat != "47.5")
-
-outlier_values <- boxplot.stats(Body_fat)$out # outlier values.
-paste("Body fat outliers: ", paste(outlier_values, sep =", "))
-
-
-#chest_circumference
-outlier_values <- boxplot.stats(Chest_circumference)$out # outlier values.
-paste("Chest_circumference outliers: ", paste(outlier_values, sep =", "))
-
-data <- subset(data,
-               data$Chest_circumference!= 136.2
-               & data$Chest_circumference!=128.3)
-
-outlier_values <- boxplot.stats(Chest_circumference)$out # outlier values.
-paste("Chest_circumference outliers: ", paste(outlier_values, sep =", "))
 
 
 #Knee_circumference
 outlier_values <- boxplot.stats(Knee_circumference)$out # outlier values.
 paste("Knee_circumference outliers: ", paste(outlier_values, sep =", "))
 data <- subset(data,
-               data$Knee_circumference != 49.1
-               & data$Knee_circumference !=45
-               & data $Knee_circumference!=46)
+               data$Knee_circumference != 44.2)
 outlier_values <- boxplot.stats(Knee_circumference)$out # outlier values.
 paste("Knee_circumference outliers: ", paste(outlier_values, sep =", "))
-
-
-#Weight
-outlier_values <- boxplot.stats(Weight)$out # outlier values.
-paste("Weight: ", paste(outlier_values, sep =", "))
-data <- subset(data,
-               data$Weight != 363.15
-               & data$Weight !=262.75)
-outlier_values <- boxplot.stats(Weight)$out # outlier values.
-paste("Weight: ", paste(outlier_values, sep =", "))
-
 
 
 #Check for normality
@@ -188,13 +156,16 @@ shapiro.test(data$Chest_circumference)
 shapiro.test(data$Density)
 shapiro.test(data$Knee_circumference)
 shapiro.test(data$Weight)
+
 # If p-value < 0.05 then variable is not normally distributed
-#age and Chest_circumference p value are less than 0.05.its not normally distributed
+#age and Chest_circumference p value are less than 0.05 so that variables are not normally distributed 
+#other variables are normally distributed
 
 
 #Need to transform Age and Chest_circumference
 attach(data)
 library(MASS)
+#Age
 box_cox_transform <- boxcox(Body_fat~Age)
 box_cox_transform
 windows(20,10)
@@ -229,6 +200,9 @@ View(data)
 cor(data)
 
 str(data)
+
+
+#### Regression model created using original variables
 attach(data)
 model<-lm(Body_fat~Age_new +
             Chest_circumference_new +
@@ -239,6 +213,9 @@ model
 # Print the summary of the regression model
 summary(model)
 #Body_Fat ~ 1.619 -3.136*Age_new + 4.09*Chest_circumference_new -5.170* Density
+
+
+#Knee_circumference,Weight have less than .05 p value so ignore and model another model
 
 #Model 2
 model_2<-lm(Body_fat~Age_new +
@@ -252,7 +229,7 @@ summary(model_2)
 #model 1
 AIC(model)
 BIC(model)
-#model @
+#model 2
 AIC(model_2)
 BIC(model_2)
 
@@ -268,8 +245,6 @@ t.test(residuals(model),mu=0)
 shapiro.test(residuals(model_2))
 #residuals diffrent from zero
 t.test(residuals(model_2),mu=0)
-
-
 #Check for multi_collinearity
 install.packages("faraway")
 library(faraway)
@@ -279,3 +254,4 @@ v1
 #Model 2
 v2<-vif(model_2)
 v2
+
