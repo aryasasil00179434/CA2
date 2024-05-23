@@ -249,13 +249,14 @@ model_2
 summary(model_2)
 #Body_Fat ~ 1.5955 -3.136*Age_new + 4.09*Chest_circumference_new -0.49* Density
 
+#model 1
 AIC(model)
-AIC(model_2)
 BIC(model)
+#model @
+AIC(model_2)
 BIC(model_2)
 
-#from this we can say that model 1 is best
-
+###from this we can say that model 1 is best because The AIC and BIC value for model 1 is lesser than Model 2
 
 #Model 1
 #residuals normally distributed
